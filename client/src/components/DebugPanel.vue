@@ -2,8 +2,10 @@
 import { ref } from 'vue'
 import { useSocket } from '../composables/useSocket'
 import { useChat } from '../composables/useChat'
+import { useCall } from '../composables/useCall'
 const { status, me, online } = useSocket()
 const { messagesWith, sendMessage } = useChat()
+const { startCall, state, error, accept } = useCall()
 const peer = ref(''), text = ref('')
 function submit() { sendMessage(peer.value, text.value); text.value = '' }
 </script>
@@ -19,5 +21,11 @@ function submit() { sendMessage(peer.value, text.value); text.value = '' }
         <p v-for='m in messagesWith(peer)' :key='m.id'>{{ m.senderUid === me?.uid ? 'me' : 'them' }}: {{ m.text }} ({{
             m.status }})</p>
         <input v-model='text' @keyup.enter='submit' />
+        <button @click='startCall(peer)'>Call</button>
+        <button v-if='state === "ringing"' @click='accept()'>Accept</button>
+
+        <p v-if='state !== "idle"'>Call state: {{ state }}</p>
+        <p v-if='error'>Error: {{ error }}</p>
     </div>
+
 </template>

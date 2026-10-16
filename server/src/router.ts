@@ -8,6 +8,7 @@ import {
   braodcastPresence,
 } from "./connections.js";
 import { handleChat, handleHistory, handleUsers } from "./chat.js";
+import { handleSignal } from "./signaling.js";
 
 export async function handleConnection(ws: WebSocket) {
   let user: UserInfo | null = null;
@@ -64,5 +65,12 @@ function route(user: UserInfo, ws: WebSocket, msg: ClientMsg) {
 
     case "users":
       return void handleUsers(ws);
+
+    case "call-offer":
+    case "call-answer":
+    case "ice-candidate":
+    case "call-reject":
+    case "call-end":
+      return void handleSignal(user, ws, msg);
   }
 }
