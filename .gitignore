@@ -1,0 +1,8 @@
+serviceAccount.json
+.env
+.env.local
+.env.*.local
+
+# dependencies and build output
+node_modules/
+dist/
