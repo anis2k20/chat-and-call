@@ -118,7 +118,7 @@ const link =
 
         <div class="my-6 flex items-center gap-3 text-slate-500 dark:text-slate-400">
           <span class="h-px flex-1 bg-slate-200 dark:bg-slate-800" />
-          <span class="text-sm">Or continue with username/email</span>
+          <span class="text-sm">Or continue with email</span>
           <span class="h-px flex-1 bg-slate-200 dark:bg-slate-800" />
         </div>
 
@@ -129,7 +129,7 @@ const link =
           </div>
 
           <div>
-            <label for="email" :class="label">Username or email address</label>
+            <label for="email" :class="label">Email address</label>
             <input id="email" v-model="email" :class="input" class="mt-1.5" type="email" autocomplete="username" required />
           </div>
 

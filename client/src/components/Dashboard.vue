@@ -72,10 +72,10 @@ const alertBar =
 
 <template>
   <div
-    class="flex h-screen flex-col bg-slate-50 text-sm text-slate-800 antialiased dark:bg-slate-950 dark:text-slate-200"
+    class="flex h-dvh min-h-0 flex-col bg-slate-50 text-sm text-slate-800 antialiased dark:bg-slate-950 dark:text-slate-200"
   >
     <!-- Header -->
-    <header class="flex items-center gap-3 border-b bg-white px-5 py-3 dark:bg-slate-900">
+    <header class="flex  z-10 flex-wrap items-center gap-3 border-b bg-white px-3 py-2.5 sm:px-5 sm:py-3 dark:bg-slate-900">
       <div
         class="flex h-8 w-8  items-center justify-center rounded-full bg-slate-900 text-xs font-medium text-white dark:bg-slate-100 dark:text-slate-900"
       >
@@ -92,10 +92,11 @@ const alertBar =
         </p>
       </div>
 
-      <div class="ml-auto flex items-center gap-2">
+      <div class="ml-auto flex items-center gap-1.5 sm:gap-2">
         <span class="hidden text-xs text-slate-400 sm:inline">Notifications: {{ permission }}</span>
-        <button :class="btnGhost" :disabled="status !== 'open' || enabled" @click="enable()">
-          {{ enabled ? "Push enabled" : "Enable push" }}
+        <button :class="btnGhost" class="px-2 sm:px-3" :disabled="status !== 'open' || enabled" @click="enable()">
+          <span class="sm:hidden">{{ enabled ? "Push on" : "Push" }}</span>
+          <span class="hidden sm:inline">{{ enabled ? "Push enabled" : "Enable push" }}</span>
         </button>
 
         <!-- Theme toggle -->
@@ -136,7 +137,7 @@ const alertBar =
           </svg>
         </button>
 
-        <button :class="btnGhost" @click="signOut()">Sign out</button>
+        <button :class="btnGhost" class="px-2 sm:px-3" @click="signOut()">Sign out</button>
       </div>
     </header>
 
@@ -145,7 +146,7 @@ const alertBar =
     <!-- Incoming call -->
     <div
       v-if="state === 'ringing'"
-      class="flex items-center gap-3 border-b border-amber-100 bg-amber-50 px-5 py-2.5 dark:border-amber-900/50 dark:bg-amber-950/40"
+      class="flex flex-wrap items-center gap-3 border-b border-amber-100 bg-amber-50 px-3 py-2.5 sm:px-5 dark:border-amber-900/50 dark:bg-amber-950/40"
     >
       <span class="h-2 w-2 animate-pulse rounded-full bg-amber-500" />
       <span class="font-medium text-amber-900 dark:text-amber-200">
@@ -160,7 +161,7 @@ const alertBar =
     <!-- Active call -->
     <div
       v-if="inCall"
-      class="flex items-center gap-3 border-b border-emerald-100 bg-emerald-50 px-5 py-2.5 dark:border-emerald-900/50 dark:bg-emerald-950/40"
+      class="flex flex-wrap items-center gap-3 border-b border-emerald-100 bg-emerald-50 px-3 py-2.5 sm:px-5 dark:border-emerald-900/50 dark:bg-emerald-950/40"
     >
       <span
         class="h-2 w-2 rounded-full bg-emerald-500"
@@ -182,17 +183,17 @@ const alertBar =
 
     <p v-if="error" :class="alertBar">{{ error }}</p>
 
-    <div class="flex min-h-0 flex-1">
+    <div class="flex min-h-0 flex-1 flex-col md:flex-row">
       <!-- Contacts -->
-      <aside class="w-60 shrink-0 overflow-y-auto border-r bg-white dark:bg-slate-900">
-        <p class="px-4 pb-1 pt-4 text-[11px] font-medium uppercase tracking-wider text-slate-400">
+      <aside class="flex max-h-24  shrink-0 items-center gap-2 overflow-x-auto border-b bg-white px-3 md:block md:max-h-none md:w-60 md:overflow-x-hidden md:overflow-y-auto md:border-b-0 md:border-r md:px-0 dark:bg-slate-900">
+        <p class="shrink-0 px-1 text-[11px] font-medium uppercase tracking-wider text-slate-400 md:px-4 md:pb-1 md:pt-4">
           People
         </p>
-        <p v-if="!contacts.length" class="px-4 py-2 text-xs text-slate-400">No other users yet</p>
+        <p v-if="!contacts.length" class="shrink-0 px-1 py-2 text-xs text-slate-400 md:px-4">No other users yet</p>
         <button
           v-for="c in contacts"
           :key="c.uid"
-          class="flex w-full items-center gap-3 px-4 py-2.5 text-left transition hover:bg-slate-50 dark:hover:bg-slate-800/60"
+          class="flex w-auto shrink-0 items-center gap-2 px-2 py-2 text-left transition hover:bg-slate-50 md:w-full md:gap-3 md:px-4 md:py-2.5 dark:hover:bg-slate-800/60"
           :class="peer === c.uid && 'bg-slate-100 dark:bg-slate-800'"
           @click="peer = c.uid"
         >
@@ -222,7 +223,7 @@ const alertBar =
         </div>
 
         <template v-else>
-          <div class="flex items-center gap-3 border-b px-5 py-3">
+          <div class="flex items-center gap-3 border-b px-3 py-3 sm:px-5 sticky top-0 bg-white dark:bg-slate-900 z-10">
             <div>
               <p class="font-medium leading-tight">{{ peerInfo?.displayName }}</p>
               <p class="text-xs text-slate-400">{{ peerInfo?.isOnline ? "Online" : "Offline" }}</p>
@@ -248,7 +249,7 @@ const alertBar =
               :class="m.senderUid === me?.uid ? 'justify-end' : 'justify-start'"
             >
               <div
-                class="max-w-[70%] rounded-2xl px-3.5 py-2"
+                class="max-w-[85%] rounded-2xl px-3.5 py-2 sm:max-w-[70%]"
                 :class="
                   m.senderUid === me?.uid
                     ? 'rounded-br-md bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900'
@@ -263,7 +264,7 @@ const alertBar =
             </div>
           </div>
 
-          <form class="flex items-center gap-2 border-t px-4 py-3" @submit.prevent="submit">
+          <form class="flex items-center gap-2 border-t px-3 py-2.5 sm:px-4 sm:py-3 sticky bottom-0 bg:white dark:bg-slate-900" @submit.prevent="submit">
             <input
               v-model="text"
               class="flex-1 rounded-lg border bg-white px-3.5 py-2 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-2 focus:ring-slate-100 dark:bg-slate-900 dark:focus:border-slate-500 dark:focus:ring-slate-800"
@@ -271,7 +272,7 @@ const alertBar =
               maxlength="2000"
             />
             <button
-              class="rounded-lg bg-slate-900 px-4 py-2 font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
+              class="rounded-lg bg-slate-900 px-3 py-2 font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-40 sm:px-4 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
               :disabled="!text.trim() || status !== 'open'"
             >
               Send

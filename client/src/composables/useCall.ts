@@ -1,6 +1,9 @@
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import type { Ice, Sdp } from "@shared/types";
 import { useSocket } from "./useSocket";
+import { useSounds } from "./useSounds";
+
+const { startRing, stopRing } = useSounds();
 
 export type CallState =
   | "idle"
@@ -23,6 +26,8 @@ let pendingOffer: Sdp | null = null;
 let queuedIce: Ice[] = []; // candidates that arrive before the remote description is set
 const audio = new Audio(); // plays the remote voice; no component needed
 audio.autoplay = true;
+
+watch(state, (s)=>(s === "ringing" ? startRing() : stopRing()));
 
 function createPc(peer: string) {
   pc = new RTCPeerConnection({

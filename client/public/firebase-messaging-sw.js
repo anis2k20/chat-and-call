@@ -17,10 +17,16 @@ const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
   const d = payload.data;
-  self.registration.showNotification(d.title, {
-    body: d.body,
-    tag: d.tag,
-  });
+
+  return self.clients
+    .matchAll({ type: "window", includeUncontrolled: true })
+    .then((list) =>
+      self.registration.showNotification(d.title, {
+        body: d.body,
+        tag: d.tag,
+        silent: list.length > 0,
+      }),
+    );
 });
 
 self.addEventListener("notificationclick", function (e) {
