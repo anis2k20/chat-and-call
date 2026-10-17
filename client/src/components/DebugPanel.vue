@@ -8,7 +8,7 @@ import { usePush } from "../composables/usePush";
 const { status, me, online } = useSocket();
 const { messagesWith, sendMessage } = useChat();
 const { startCall, state, error, accept } = useCall();
-const { enable } = usePush();
+const { enable, permission, enabled, error: pushError } = usePush();
 const peer = ref(""),
   text = ref("");
 function submit() {
@@ -18,7 +18,11 @@ function submit() {
 </script>
 
 <template>
-    <button :disabled="status !== 'open'" style="width: 200px"  @click="enable()">Enable Push notifications</button>
+    <button :disabled="status !== 'open'" style="width: 200px" @click="enable()">
+      {{ enabled ? "Push enabled" : "Enable Push notifications" }}
+    </button>
+    <p>Notification permission: {{ permission }}</p>
+    <p v-if="pushError">Push error: {{ pushError }}</p>
   <p>
     Socket: {{ status }} | online:
     {{ online.map((u) => u.displayName).join(", ") }}

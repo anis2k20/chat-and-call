@@ -84,6 +84,9 @@ async function startCall(to: string) {
     [...online.value, ...users.value].find((u) => u.uid === to)?.displayName ??
     "";
   state.value = "calling";
+  ringTimer = setTimeout(() => {
+    if (state.value === "calling") hangUp();
+  }, 30000);
   createPc(to);
   const offer = await pc!.createOffer();
   await pc!.setLocalDescription(offer);
@@ -138,7 +141,7 @@ onMessage(async (m) => {
 });
 
 export function useCall() {
-  return { state, peerUid, peerName, muted, error, startCall, accept };
+  return { state, peerUid, peerName, muted, error, startCall, accept, reject, hangUp, toggleMute };
 }
 
 let ringTimer: ReturnType<typeof setTimeout> | undefined;
@@ -159,6 +162,3 @@ function toggleMute() {
   localStream?.getAudioTracks().forEach((t) => (t.enabled = !muted.value));
 }
 
-ringTimer = setTimeout(() => {
-  if (state.value === "calling") hangUp();
-}, 30000);

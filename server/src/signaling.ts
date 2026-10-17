@@ -47,15 +47,15 @@ export function handleSignal(user: UserInfo, ws: WebSocket, msg: SignalMsg) {
       break;
   }
 
-  const deleivered = sendToUser(msg.to, out);
+  const delivered = sendToUser(msg.to, out);
   if (msg.type === "call-offer" && !isViewing(msg.to))
     pushToUser(
       msg.to,
-      "Incomming call",
+      "Incoming call",
       user.displayName + " is calling",
       "call-" + from,
     ).catch(console.error);
-  if (msg.type === "call-offer" && !deleivered) {
+  if (msg.type === "call-offer" && !delivered) {
     send(ws, { type: "call-reject", from: msg.to, reason: "offline" });
   }
 }

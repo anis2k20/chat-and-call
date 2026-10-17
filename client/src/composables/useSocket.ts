@@ -36,6 +36,10 @@ async function connect() {
   };
 }
 
+document.addEventListener("visibilitychange", () => {
+  send({ type: "visibility", visible: !document.hidden });
+});
+
 function disconnect() {
   ws?.close();
 }
