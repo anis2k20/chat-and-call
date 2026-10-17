@@ -22,6 +22,7 @@ async function connect() {
     if (m.type === "auth-ok") {
       me.value = m.user;
       status.value = "open";
+      send({ type: "visibility", visible: !document.hidden });
     }
     if (m.type === "presence") online.value = m.online;
     if (m.type === "users") users.value = m.users;

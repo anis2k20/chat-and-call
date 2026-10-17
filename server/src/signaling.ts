@@ -1,6 +1,7 @@
 import type { WebSocket } from "ws";
 import type { ClientMsg, ServerMsg, UserInfo } from "../../shared/types";
-import { send, sendToUser } from "./connections";
+import { isViewing, send, sendToUser } from "./connections";
+import { pushToUser } from "./push";
 
 type SignalMsg = Extract<
   ClientMsg,
@@ -47,6 +48,13 @@ export function handleSignal(user: UserInfo, ws: WebSocket, msg: SignalMsg) {
   }
 
   const deleivered = sendToUser(msg.to, out);
+  if (msg.type === "call-offer" && !isViewing(msg.to))
+    pushToUser(
+      msg.to,
+      "Incomming call",
+      user.displayName + " is calling",
+      "call-" + from,
+    ).catch(console.error);
   if (msg.type === "call-offer" && !deleivered) {
     send(ws, { type: "call-reject", from: msg.to, reason: "offline" });
   }

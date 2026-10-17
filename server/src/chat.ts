@@ -1,8 +1,9 @@
 import type { WebSocket } from "ws";
 import type { ClientMsg, ChatMessage, UserInfo } from "../../shared/types";
 import { chatIdFor } from "../../shared/chat";
-import { send, sendToUser } from "./connections.js";
+import { send, sendToUser, isViewing } from "./connections.js";
 import { db } from "./auth.js";
+import { pushToUser } from "./push.js";
 
 export async function handleChat(
   user: UserInfo,
@@ -39,6 +40,13 @@ export async function handleChat(
 
   send(ws, { type: "chat-ack", message });
   sendToUser(msg.to, { type: "chat", message });
+  if (!isViewing(msg.to))
+    pushToUser(
+      msg.to,
+      user.displayName,
+      text.slice(0, 100),
+      "chat-" + user.uid,
+    ).catch(console.error);
 }
 // history
 export async function handleHistory(

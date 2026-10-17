@@ -6,9 +6,11 @@ import {
   addSocket,
   removeSocket,
   braodcastPresence,
+  setVisible,
 } from "./connections.js";
 import { handleChat, handleHistory, handleUsers } from "./chat.js";
 import { handleSignal } from "./signaling.js";
+import { saveDevice } from "./push";
 
 export async function handleConnection(ws: WebSocket) {
   let user: UserInfo | null = null;
@@ -72,5 +74,9 @@ function route(user: UserInfo, ws: WebSocket, msg: ClientMsg) {
     case "call-reject":
     case "call-end":
       return void handleSignal(user, ws, msg);
+    case "register-device":
+      return void saveDevice(user.uid, msg.fcmToken);
+    case "visibility":
+      return setVisible(user.uid, ws, !!msg.visible);
   }
 }
