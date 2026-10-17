@@ -18,7 +18,7 @@ function submit() {
 </script>
 
 <template>
-    <button style="width: 200px"  @click="enable()">Enable Push notifications</button>
+    <button :disabled="status !== 'open'" style="width: 200px"  @click="enable()">Enable Push notifications</button>
   <p>
     Socket: {{ status }} | online:
     {{ online.map((u) => u.displayName).join(", ") }}

@@ -13,10 +13,10 @@ async function enable() {
   permission.value = await Notification.requestPermission();
   if (permission.value !== "granted") return;
   const registration = await navigator.serviceWorker.register(
-    "/firebase-messageing-sw.js",
+    "/firebase-messaging-sw.js",
   );
   const fcmToken = await getToken(getMessaging(app), {
-    vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
+    vapidKey: import.meta.env.VITE_VAPID_KEY,
     serviceWorkerRegistration: registration,
   });
   send({ type: "register-device", fcmToken });
