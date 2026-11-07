@@ -81,6 +81,8 @@ function cleanup() {
   state.value = "idle";
 }
 
+// let ringTimer: ReturnType<typeof setTimeout> | undefined;
+
 async function startCall(to: string) {
   if (state.value !== "idle" || !(await getMic())) return;
   error.value = "";
@@ -89,9 +91,9 @@ async function startCall(to: string) {
     [...online.value, ...users.value].find((u) => u.uid === to)?.displayName ??
     "";
   state.value = "calling";
-  ringTimer = setTimeout(() => {
-    if (state.value === "calling") hangUp();
-  }, 30000);
+  // ringTimer = setTimeout(() => {
+  //   if (state.value === "calling") hangUp();
+  // }, 30000);
   createPc(to);
   const offer = await pc!.createOffer();
   await pc!.setLocalDescription(offer);
@@ -149,7 +151,7 @@ export function useCall() {
   return { state, peerUid, peerName, muted, error, startCall, accept, reject, hangUp, toggleMute };
 }
 
-let ringTimer: ReturnType<typeof setTimeout> | undefined;
+
 
 function reject() {
   if (state.value === "ringing" && peerUid.value)
