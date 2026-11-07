@@ -2,9 +2,9 @@ import { reactive } from "vue";
 import type { ChatMessage } from "@shared/types";
 import { chatIdFor } from "@shared/chat";
 import { useSocket } from "./useSocket";
-import {useSounds} from "./useSounds";
+// import {useSounds} from "./useSounds";
 
-const { playMessage } = useSounds();
+// const { playMessage } = useSounds();
 
 export type LocalMessage = ChatMessage & { status: "sending" | "sent" };
 
@@ -23,7 +23,7 @@ function upsert(m: LocalMessage) {
 onMessage((m) => {
   if (m.type === "chat" || m.type === "chat-ack")
     upsert({ ...m.message, status: "sent" });
-    if(document.hidden) playMessage();
+    // if(document.hidden) playMessage();
   if (m.type === "history")
     m.messages.forEach((x) => upsert({ ...x, status: "sent" }));
 });
