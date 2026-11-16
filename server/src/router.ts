@@ -14,6 +14,7 @@ import { saveDevice } from "./push";
 
 export async function handleConnection(ws: WebSocket) {
   let user: UserInfo | null = null;
+  let verifiedUser: UserInfo & { email: string };
   const timer = setTimeout(() => {
     if (!user) {
       ws.close(4001, "Auth timeout");
@@ -33,16 +34,22 @@ export async function handleConnection(ws: WebSocket) {
         return ws.close(4001, "Auth required");
       }
       try {
-        const varified = await verifyToken(msg.token);
-        await ensureUserDoc(varified);
-        user = { uid: varified.uid, displayName: varified.displayName };
-      } catch {
+        verifiedUser = await verifyToken(msg.token);
+        user = { uid: verifiedUser.uid, displayName: verifiedUser.displayName };
+      } catch (error) {
+        console.error("WebSocket authentication failed", error);
         return ws.close(4003, "Invalid token");
       }
       clearTimeout(timer);
       send(ws, { type: "auth-ok", user });
       addSocket(user, ws);
       braodcastPresence();
+      void ensureUserDoc(verifiedUser)
+        .then(() => handleUsers(ws))
+        .catch((error) => {
+          console.error("Failed to provision or load user list", error);
+          send(ws, { type: "error", message: "Unable to load users" });
+        });
       return;
     }
     route(user, ws, msg);
@@ -51,7 +58,7 @@ export async function handleConnection(ws: WebSocket) {
   ws.on("close", () => {
     clearTimeout(timer);
     if (user) {
-      removeSocket(user.uid, ws);
+      removeSocket(user, ws);
       braodcastPresence();
     }
   });

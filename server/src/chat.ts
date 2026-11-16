@@ -27,16 +27,22 @@ export async function handleChat(
     createdAt: Date.now(),
   };
 
-  const chatRef = db.doc(`chats/${message.chatId}`);
-  await chatRef.set(
-    {
-      chatId: message.chatId,
-      perticipants: [user.uid, msg.to],
-      createdAt: Date.now(),
-    },
-    { merge: true },
-  );
-  await chatRef.collection("messages").doc(message.id).set(message);
+  try {
+    const chatRef = db.doc(`chats/${message.chatId}`);
+    await chatRef.set(
+      {
+        chatId: message.chatId,
+        perticipants: [user.uid, msg.to],
+        createdAt: Date.now(),
+      },
+      { merge: true },
+    );
+    await chatRef.collection("messages").doc(message.id).set(message);
+  } catch (error) {
+    console.error("Failed to persist chat message", error);
+    send(ws, { type: "error", message: "Message could not be sent" });
+    return;
+  }
 
   send(ws, { type: "chat-ack", message });
   sendToUser(msg.to, { type: "chat", message });
