@@ -27,6 +27,7 @@ export function handleSignal(user: UserInfo, ws: WebSocket, msg: SignalMsg) {
         from,
         fromName: user.displayName,
         sdp: msg.sdp,
+        video: msg.video === true
       };
       break;
 

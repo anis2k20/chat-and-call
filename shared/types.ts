@@ -25,7 +25,7 @@ export type ClientMsg =
   | { type: "history"; withUid: string; before?: number }
   | { type: "visibility"; visible: boolean }
   | { type: "register-device"; fcmToken: string }
-  | { type: "call-offer"; to: string; sdp: Sdp }
+  | { type: 'call-offer'; to: string; sdp: Sdp; video?: boolean }
   | { type: "call-answer"; to: string; sdp: Sdp }
   | { type: "ice-candidate"; to: string; candidate: Ice }
   | { type: "call-reject"; to: string }
@@ -39,7 +39,7 @@ export type ServerMsg =
   | { type: "chat"; message: ChatMessage }
   | { type: "chat-ack"; message: ChatMessage }
   | { type: "history"; withUid: string; messages: ChatMessage[] }
-  | { type: "call-offer"; from: string; fromName: string; sdp: Sdp }
+  |{ type: 'call-offer'; from: string; fromName: string; sdp: Sdp; video?: boolean }
   | { type: "call-answer"; from: string; sdp: Sdp }
   | { type: "ice-candidate"; from: string; candidate: Ice }
   | { type: "call-reject"; from: string; reason?: string }

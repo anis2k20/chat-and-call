@@ -10,8 +10,17 @@ import { useTheme } from "../composables/useTheme";
 const { logout } = useAuth();
 const { status, me, online, users } = useSocket();
 const { messagesWith, sendMessage, loadHistory } = useChat();
-const { startCall, accept, reject, hangUp, toggleMute, state, muted, peerName, error } =
-  useCall();
+const {
+  startCall,
+  accept,
+  reject,
+  hangUp,
+  toggleMute,
+  state,
+  muted,
+  peerName,
+  error,
+} = useCall();
 const { enable, permission, enabled, error: pushError } = usePush();
 const { theme, toggleTheme } = useTheme();
 
@@ -29,9 +38,13 @@ const contacts = computed(() => {
     .sort((a, b) => Number(b.isOnline) - Number(a.isOnline));
 });
 
-const peerInfo = computed(() => contacts.value.find((c) => c.uid === peer.value));
+const peerInfo = computed(() =>
+  contacts.value.find((c) => c.uid === peer.value),
+);
 const messages = computed(() => (peer.value ? messagesWith(peer.value) : []));
-const inCall = computed(() => ["calling", "connecting", "connected"].includes(state.value));
+const inCall = computed(() =>
+  ["calling", "connecting", "connected"].includes(state.value),
+);
 
 watch(peer, (uid) => uid && loadHistory(uid));
 watch(
@@ -75,36 +88,57 @@ const alertBar =
     class="flex h-dvh min-h-0 flex-col bg-slate-50 text-sm text-slate-800 antialiased dark:bg-slate-950 dark:text-slate-200"
   >
     <!-- Header -->
-    <header class="flex  z-10 flex-wrap items-center gap-3 border-b bg-white px-3 py-2.5 sm:px-5 sm:py-3 dark:bg-slate-900">
+    <header
+      class="flex z-10 flex-wrap items-center gap-3 border-b bg-white px-3 py-2.5 sm:px-5 sm:py-3 dark:bg-slate-900"
+    >
       <div
-        class="flex h-8 w-8  items-center justify-center rounded-full bg-slate-900 text-xs font-medium text-white dark:bg-slate-100 dark:text-slate-900"
+        class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-900 text-xs font-medium text-white dark:bg-slate-100 dark:text-slate-900"
       >
         {{ initial(me?.displayName) }}
       </div>
       <div class="leading-tight">
         <p class="font-medium">{{ me?.displayName ?? "Connecting..." }}</p>
-        <p class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
+        <p
+          class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400"
+        >
           <span
             class="h-1.5 w-1.5 rounded-full"
-            :class="status === 'open' ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600'"
+            :class="
+              status === 'open'
+                ? 'bg-emerald-500'
+                : 'bg-slate-300 dark:bg-slate-600'
+            "
           />
           {{ status === "open" ? "Connected" : status }}
         </p>
       </div>
 
       <div class="ml-auto flex items-center gap-1.5 sm:gap-2">
-        <span class="hidden text-xs text-slate-400 sm:inline">Notifications: {{ permission }}</span>
-        <button :class="btnGhost" class="px-2 sm:px-3" :disabled="status !== 'open' || enabled" @click="enable()">
+        <span class="hidden text-xs text-slate-400 sm:inline"
+          >Notifications: {{ permission }}</span
+        >
+        <button
+          :class="btnGhost"
+          class="px-2 sm:px-3"
+          :disabled="status !== 'open' || enabled"
+          @click="enable()"
+        >
           <span class="sm:hidden">{{ enabled ? "Push on" : "Push" }}</span>
-          <span class="hidden sm:inline">{{ enabled ? "Push enabled" : "Enable push" }}</span>
+          <span class="hidden sm:inline">{{
+            enabled ? "Push enabled" : "Enable push"
+          }}</span>
         </button>
 
         <!-- Theme toggle -->
         <button
           :class="btnGhost"
           class="!px-2"
-          :title="theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
-          :aria-label="theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+          :title="
+            theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+          "
+          :aria-label="
+            theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+          "
           @click="toggleTheme()"
         >
           <svg
@@ -137,7 +171,9 @@ const alertBar =
           </svg>
         </button>
 
-        <button :class="btnGhost" class="px-2 sm:px-3" @click="signOut()">Sign out</button>
+        <button :class="btnGhost" class="px-2 sm:px-3" @click="signOut()">
+          Sign out
+        </button>
       </div>
     </header>
 
@@ -168,11 +204,21 @@ const alertBar =
         :class="state !== 'connected' && 'animate-pulse'"
       />
       <span class="font-medium text-emerald-900 dark:text-emerald-200">
-        {{ state === "calling" ? "Calling" : state === "connecting" ? "Connecting to" : "In call with" }}
+        {{
+          state === "calling"
+            ? "Calling"
+            : state === "connecting"
+              ? "Connecting to"
+              : "In call with"
+        }}
         {{ peerName }}
       </span>
       <div class="ml-auto flex gap-2">
-        <button v-if="state === 'connected'" :class="btnGhost" @click="toggleMute()">
+        <button
+          v-if="state === 'connected'"
+          :class="btnGhost"
+          @click="toggleMute()"
+        >
           {{ muted ? "Unmute" : "Mute" }}
         </button>
         <button :class="btnRed" @click="hangUp()">
@@ -185,11 +231,20 @@ const alertBar =
 
     <div class="flex min-h-0 flex-1 flex-col md:flex-row">
       <!-- Contacts -->
-      <aside class="flex max-h-24  shrink-0 items-center gap-2 overflow-x-auto border-b bg-white px-3 md:block md:max-h-none md:w-60 md:overflow-x-hidden md:overflow-y-auto md:border-b-0 md:border-r md:px-0 dark:bg-slate-900">
-        <p class="shrink-0 px-1 text-[11px] font-medium uppercase tracking-wider text-slate-400 md:px-4 md:pb-1 md:pt-4">
+      <aside
+        class="flex max-h-24 shrink-0 items-center gap-2 overflow-x-auto border-b bg-white px-3 md:block md:max-h-none md:w-60 md:overflow-x-hidden md:overflow-y-auto md:border-b-0 md:border-r md:px-0 dark:bg-slate-900"
+      >
+        <p
+          class="shrink-0 px-1 text-[11px] font-medium uppercase tracking-wider text-slate-400 md:px-4 md:pb-1 md:pt-4"
+        >
           People
         </p>
-        <p v-if="!contacts.length" class="shrink-0 px-1 py-2 text-xs text-slate-400 md:px-4">No other users yet</p>
+        <p
+          v-if="!contacts.length"
+          class="shrink-0 px-1 py-2 text-xs text-slate-400 md:px-4"
+        >
+          No other users yet
+        </p>
         <button
           v-for="c in contacts"
           :key="c.uid"
@@ -205,28 +260,58 @@ const alertBar =
             </div>
             <span
               class="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-white dark:border-slate-900"
-              :class="c.isOnline ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600'"
+              :class="
+                c.isOnline ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600'
+              "
             />
           </div>
-          <span class="truncate" :class="peer === c.uid && 'font-medium'">{{ c.displayName }}</span>
+          <span class="truncate" :class="peer === c.uid && 'font-medium'">{{
+            c.displayName
+          }}</span>
         </button>
       </aside>
 
       <!-- Chat -->
       <main class="flex min-w-0 flex-1 flex-col bg-white dark:bg-slate-900">
         <div v-if="!peer" class="m-auto text-slate-400">
-            <!-- <img src="../assets/chat.png" alt="Chat" class="mx-auto mb-2 max-w-[50px]" /> -->
-             <p class="mx-auto w-12 h-12 flex items-center justify-center  text-center ">
-                 <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-messages-circle preview-icon"><path d="M19.95 10.05a7 7 0 011.412 7.872 1 1 0 00-.058.787l.675 2.089a1 1 0 01-1.236 1.168l-2.155-.631a1 1 0 00-.745.06 7 7 0 01-7.793-1.445"/><path d="M2.696 12.708a1 1 0 00-.058-.785 7 7 0 113.518 3.473 1 1 0 00-.744-.061l-2.155.63a1 1 0 01-1.236-1.167z"/></svg>
-                </p>
-            Select a person to start chatting
+          <!-- <img src="../assets/chat.png" alt="Chat" class="mx-auto mb-2 max-w-[50px]" /> -->
+          <p
+            class="mx-auto w-12 h-12 flex items-center justify-center text-center"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="34"
+              height="34"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-messages-circle preview-icon"
+            >
+              <path
+                d="M19.95 10.05a7 7 0 011.412 7.872 1 1 0 00-.058.787l.675 2.089a1 1 0 01-1.236 1.168l-2.155-.631a1 1 0 00-.745.06 7 7 0 01-7.793-1.445"
+              />
+              <path
+                d="M2.696 12.708a1 1 0 00-.058-.785 7 7 0 113.518 3.473 1 1 0 00-.744-.061l-2.155.63a1 1 0 01-1.236-1.167z"
+              />
+            </svg>
+          </p>
+          Select a person to start chatting
         </div>
 
         <template v-else>
-          <div class="flex items-center gap-3 border-b px-3 py-3 sm:px-5 sticky top-0 bg-white dark:bg-slate-900 z-10">
+          <div
+            class="flex items-center gap-3 border-b px-3 py-3 sm:px-5 sticky top-0 bg-white dark:bg-slate-900 z-10"
+          >
             <div>
-              <p class="font-medium leading-tight">{{ peerInfo?.displayName }}</p>
-              <p class="text-xs text-slate-400">{{ peerInfo?.isOnline ? "Online" : "Offline" }}</p>
+              <p class="font-medium leading-tight">
+                {{ peerInfo?.displayName }}
+              </p>
+              <p class="text-xs text-slate-400">
+                {{ peerInfo?.isOnline ? "Online" : "Offline" }}
+              </p>
             </div>
             <button
               :class="btnGhost"
@@ -236,6 +321,15 @@ const alertBar =
             >
               Voice call
             </button>
+
+            <button
+              :class="btnGhost"
+              :disabled="state !== 'idle' || status !== 'open'"
+              @click="startCall(peer, true)"
+            >
+              Video call
+            </button>
+
           </div>
 
           <div
@@ -257,14 +351,20 @@ const alertBar =
                 "
               >
                 <p class="whitespace-pre-wrap break-words">{{ m.text }}</p>
-                <p class="mt-0.5 text-right text-[10px] text-slate-400 dark:text-slate-500">
-                  {{ time(m.createdAt) }}<span v-if="m.status === 'sending'"> · sending</span>
+                <p
+                  class="mt-0.5 text-right text-[10px] text-slate-400 dark:text-slate-500"
+                >
+                  {{ time(m.createdAt)
+                  }}<span v-if="m.status === 'sending'"> · sending</span>
                 </p>
               </div>
             </div>
           </div>
 
-          <form class="flex items-center gap-2 border-t px-3 py-2.5 sm:px-4 sm:py-3 sticky bottom-0 bg:white dark:bg-slate-900" @submit.prevent="submit">
+          <form
+            class="flex items-center gap-2 border-t px-3 py-2.5 sm:px-4 sm:py-3 sticky bottom-0 bg:white dark:bg-slate-900"
+            @submit.prevent="submit"
+          >
             <input
               v-model="text"
               class="flex-1 rounded-lg border bg-white px-3.5 py-2 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-2 focus:ring-slate-100 dark:bg-slate-900 dark:focus:border-slate-500 dark:focus:ring-slate-800"
